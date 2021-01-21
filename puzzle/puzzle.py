@@ -54,6 +54,10 @@ class BimaruPuzzle:
         self.add_autowater()
         pass
 
+    def solve(self):
+        self.add_autowater()
+        self.surround_ship_bits()
+
     def get_grid_dims(self):
         return len(self.linegrid),len(self.linegrid[0])
 
@@ -77,7 +81,7 @@ class BimaruPuzzle:
                 if not self.counts_per_row[row_idx] or not self.counts_per_col[col_idx]:
                     self.linegrid[row_idx][col_idx] = "W"
 
-    def superimpose_grids(self, grid_pattern, centre_row, centre_column):
+    def _superimpose_grids(self, grid_pattern, centre_row, centre_column):
         # Iterate over the old_grid and modify entries
         new_grid = deepcopy(self.linegrid)
         # Check the center coords are in the grid
@@ -95,17 +99,19 @@ class BimaruPuzzle:
             return
 
         grid_row_count, grid_col_count = self.get_grid_dims()
-        top_row = min(centre_row + 1, grid_row_count)
-        bottom_row = max(centre_row - 1, 0)
-        left_col = min(centre_column + 1, grid_col_count)
-        right_col = max(centre_column - 1, 0)
+        top_row = min(centre_row - 1, grid_row_count-1)
+        bottom_row = max(centre_row + 1, 0)
+        right_col = min(centre_column + 1, grid_col_count-1)
+        left_col = max(centre_column - 1, 0)
 
-
-        for row_idx in range(top_row,bottom_row+1):
+        for row_idx in range(top_row, bottom_row+1):
             for col_idx in range(left_col, right_col+1):
-                subgrid_row = row_idx - centre_row
-                subgrid_col = col_idx - centre_column
-                cell = self.new_grid[row_idx][col_idx]
+                subgrid_row = row_idx - centre_row + 1
+                subgrid_col = col_idx - centre_column + 1
+                subcell = patt[subgrid_row][subgrid_col]
+                if subcell == "W":
+                    new_grid[row_idx][col_idx] = subcell  # update cell
+        self.linegrid = new_grid
 
     def surround_ship_bits(self):
         """
@@ -117,4 +123,27 @@ class BimaruPuzzle:
             for col_idx, cell in enumerate(row):
                 if cell in SHIP_BITS:
                     # Got a bit o ship
-                    pass
+                    self._superimpose_grids(WATERING_PATTERNS[cell], row_idx, col_idx)
+
+    def __str__(self):
+        if self.linegrid:
+            stringgrid = "\n".join(["".join(row) for row in self.linegrid])
+            return stringgrid
+
+
+
+if __name__ == "__main__":
+    puzzle_grid = """EEEEEE
+                    EEEEEU
+                    EEEEEE
+                    EEEEEE
+                    EEEEEE
+                    EEEEWE
+                    """
+    sample_puzzle_a = BimaruPuzzle(puzzle_grid,
+                                   [3, 1, 3, 3, 1, 3],
+                                   [2, 3, 1, 3, 0, 5],
+                                   [4, 3, 2, 2, 1, 1, 1]
+                                   )
+    sample_puzzle_a.solve()
+    print(sample_puzzle_a)
