@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-import puzzle
+from puzzle.puzzle import BimaruPuzzle
 
 
 class TestBimaruPuzzle(TestCase):
@@ -19,5 +19,5 @@ class TestBimaruPuzzle(TestCase):
                        ['E', 'E', 'E', 'E', 'E', 'E'],
                        ['E', 'E', 'E', 'E', 'E', 'E'],
                        ['E', 'E', 'E', 'E', 'W', 'E']]
-        result = puzzle.BimaruPuzzle.get_clean_grid(puzzle_grid)
+        result = BimaruPuzzle.get_clean_grid(puzzle_grid)
         self.assertEqual(result, result_grid)
