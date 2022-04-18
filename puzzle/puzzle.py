@@ -1,6 +1,16 @@
 from copy import deepcopy
 
-SHIP_BITS = ["U", "D", "L", "R", "C"]
+EMPTY_CELL = "E"
+WATER_CELL = "W"
+
+SHIP_BITS = ["U",  # Up ship end
+             "D",  # Down ship end
+             "L",  # Left ship end
+             "R",  # Right ship end
+             "C",  # center ship
+             "O",  # Baby ship 1U
+             "-",  # left-right ship mid section
+             "|"]  # up-down ship mid section
 
 WATERING_PATTERNS = {
     "U":
