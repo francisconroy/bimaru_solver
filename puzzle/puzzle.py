@@ -42,7 +42,25 @@ WATERING_PATTERNS = {
         WXW
         XCX
         WXW
+        """,
+    "O":
         """
+        WWW
+        WOW
+        WWW
+        """,
+    "-":
+        """
+        WWW
+        X-X
+        WWW
+        """,
+    "|":
+        """
+        WXW
+        W|W
+        WXW
+        """,
 }
 
 
