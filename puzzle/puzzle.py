@@ -75,9 +75,9 @@ class BimaruPuzzle:
         """
         self.grid = ascii_grid
         self.linegrid = None
-        self.counts_per_col = counts_per_col
-        self.counts_per_row = counts_per_row
-        self.ships_to_place = ships_to_place
+        self.counts_per_col = counts_per_col  # Number of ship cells in each column
+        self.counts_per_row = counts_per_row  # Number of ship cells in each row
+        self.ships_to_place = ships_to_place  # The lengths of the ships to be placed
         self.clean_grid()
         self.add_autowater()
         pass
