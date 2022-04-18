@@ -79,35 +79,90 @@ class BimaruPuzzle:
         self.counts_per_row = counts_per_row  # Number of ship cells in each row
         self.ships_to_place = ships_to_place  # The lengths of the ships to be placed
         self.clean_grid()
-        self.add_autowater()
+        self.add_autowater_empty_rows_cols()
         pass
 
     def solve(self):
-        self.add_autowater()
+        self.add_autowater_empty_rows_cols()
         self.surround_ship_bits()
+        self.autofill_water_in_full_rows_cols()
 
     def get_grid_dims(self):
-        return len(self.linegrid),len(self.linegrid[0])
+        return len(self.linegrid), len(self.linegrid[0])
 
     def clean_grid(self):
-        if self.linegrid is None:
-            self.linegrid = self.get_clean_grid(self.grid)
+        self.linegrid = self.get_clean_grid(self.grid)
 
     @staticmethod
     def get_clean_grid(stringgrid):
+        """
+        Converts a string based grid into a cell based grid where each cell is a list element
+        :param stringgrid:
+        :return:
+        """
         gridlines = stringgrid.splitlines(False)
         temp_linegrid = []
-        for line in gridlines:
-            line = line.strip()
-            if line:
-                temp_linegrid.append(list(line))
+        for row in gridlines:
+            row = row.strip()
+            if row:
+                temp_linegrid.append(list(row))
         return temp_linegrid
 
-    def add_autowater(self):
+    def get_remaining_rol_col_ship_counts(self):
+        """
+        Returns the number of ship parts still to be placed in each row/column
+        :return:
+        """
+        row_counts = deepcopy(self.counts_per_row)
+        col_counts = deepcopy(self.counts_per_col)
         for row_idx, row in enumerate(self.linegrid):
-            for col_idx, cell in enumerate(row):
-                if not self.counts_per_row[row_idx] or not self.counts_per_col[col_idx]:
-                    self.linegrid[row_idx][col_idx] = "W"
+            for col_idx, cell_char in enumerate(row):
+                if cell_char in SHIP_BITS:
+                    row_counts[row_idx] -= 1
+                    col_counts[col_idx] -= 1
+        return row_counts, col_counts
+
+    def check_row_col_counts(self, new_grid):
+        """
+        This method checks if the proposed grid meets all constraints or not
+        :param new_grid: A grid in the standard format
+        :return: True if all of the row col counts are valid
+        """
+        row_counts = deepcopy(self.counts_per_row)
+        col_counts = deepcopy(self.counts_per_col)
+        for row_idx, row in enumerate(new_grid):
+            for col_idx, cell_char in enumerate(row):
+                if cell_char in SHIP_BITS:
+                    row_counts[row_idx] -= 1
+                    col_counts[col_idx] -= 1
+
+        # Check that all of the counts are positive still
+        rows_healthy = all([count >= 0 for count in row_counts])
+        cols_healthy = all([count >= 0 for count in col_counts])
+        return rows_healthy and cols_healthy
+
+    def autofill_water_in_full_rows_cols(self):
+        """
+        Add water cells if all the ship bits for that column/row are populated already.
+        :return:
+        """
+        ships_to_add_to_row, ships_to_add_to_col = self.get_remaining_rol_col_ship_counts()
+        for row_idx, row in enumerate(self.linegrid):
+            for col_idx, cell_char in enumerate(row):
+                # TODO complete
+                if ships_to_add_to_row[row_idx] == 0 or ships_to_add_to_col[col_idx] == 0:
+                    if self.linegrid[row_idx][col_idx] == EMPTY_CELL:
+                        self.linegrid[row_idx][col_idx] = WATER_CELL
+
+    def add_autowater_empty_rows_cols(self):
+        """
+        Adds water to rows/cols with no ship bits
+        :return:
+        """
+        for row_idx, row in enumerate(self.linegrid):
+            for col_idx, cell_char in enumerate(row):
+                if self.counts_per_row[row_idx] == 0 or self.counts_per_col[col_idx] == 0:
+                    self.linegrid[row_idx][col_idx] = WATER_CELL
 
     def _superimpose_grids(self, grid_pattern, centre_row, centre_column):
         # Iterate over the old_grid and modify entries
@@ -137,7 +192,7 @@ class BimaruPuzzle:
                 subgrid_row = row_idx - centre_row + 1
                 subgrid_col = col_idx - centre_column + 1
                 subcell = patt[subgrid_row][subgrid_col]
-                if subcell == "W":
+                if subcell == WATER_CELL:
                     new_grid[row_idx][col_idx] = subcell  # update cell
         self.linegrid = new_grid
 
