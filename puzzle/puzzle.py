@@ -28,13 +28,13 @@ WATERING_PATTERNS = {
     "L":
         """
         WWW
-        XLW
+        WLX
         WWW
         """,
     "R":
         """
         WWW
-        WRX
+        XRW
         WWW
         """,
     "C":
