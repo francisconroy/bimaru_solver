@@ -149,7 +149,6 @@ class BimaruPuzzle:
         ships_to_add_to_row, ships_to_add_to_col = self.get_remaining_rol_col_ship_counts()
         for row_idx, row in enumerate(self.linegrid):
             for col_idx, cell_char in enumerate(row):
-                # TODO complete
                 if ships_to_add_to_row[row_idx] == 0 or ships_to_add_to_col[col_idx] == 0:
                     if self.linegrid[row_idx][col_idx] == EMPTY_CELL:
                         self.linegrid[row_idx][col_idx] = WATER_CELL
