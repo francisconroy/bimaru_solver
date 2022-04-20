@@ -212,6 +212,16 @@ class BimaruPuzzle:
             stringgrid = "\n".join(["".join(row) for row in self.linegrid])
             return stringgrid
 
+    def fix_shipbit_orientations(self):
+        """
+        This method scans the grid for shipbits that are non-orientated "C"
+        and attempts to orientate them by finding extremedies of the ship to
+        determine the orientation.
+        We scan the grid from top-left to bottom right and then use recursion to detect the ship's
+        direction
+        :return: number of bits fixed
+        """
+        pass
 
 
 if __name__ == "__main__":
